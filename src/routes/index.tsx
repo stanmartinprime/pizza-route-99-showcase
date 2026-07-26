@@ -1,28 +1,40 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Phone, MessageCircle, MapPin, Clock, Star, Car, Utensils, Heart, Users, ShoppingBag, Facebook, Instagram, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Phone,
+  MessageCircle,
+  MapPin,
+  Clock,
+  Star,
+  Car,
+  Utensils,
+  Heart,
+  Users,
+  ShoppingBag,
+  Facebook,
+  Instagram,
+  Beef,
+  Leaf,
+  Fish,
+  IceCream,
+  Sparkles,
+} from "lucide-react";
 import heroPizza from "@/assets/hero-pizza.jpg";
-import pizzaMargherita from "@/assets/pizza-margherita.jpg";
-import pizzaSavoyarde from "@/assets/pizza-savoyarde.jpg";
-import pizzaVegetarienne from "@/assets/pizza-vegetarienne.jpg";
-import pizzaReine from "@/assets/pizza-reine.jpg";
-import pizzaQuatreFromages from "@/assets/pizza-quatre-fromages.jpg";
-import pizzaMontagnarde from "@/assets/pizza-montagnarde.jpg";
 
 const PHONE = "+33767100850";
 const PHONE_DISPLAY = "07 67 10 08 50";
 const WHATSAPP_URL = "https://wa.me/33767100850";
-const MAPS_URL = "https://www.google.com/maps/dir/?api=1&destination=99+route+du+Freney+73160+Saint-Sulpice";
-const REVIEW_URL = "https://search.google.com/local/writereview?placeid=ChIJ6xyTw64Hi0cRVLTe3sXHtPw";
+const MAPS_URL =
+  "https://www.google.com/maps/dir/?api=1&destination=99+route+du+Freney+73160+Saint-Sulpice";
+const REVIEW_URL =
+  "https://search.google.com/local/writereview?placeid=ChIJ6xyTw64Hi0cRVLTe3sXHtPw";
 const ADDRESS = "99 route du Freney, 73160 Saint-Sulpice";
 
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "Pizzeria",
   name: "Pizza Route 99",
-  image: "https://id-preview--ce9d7f8c-2a83-4e79-a4c5-292e49ae43f3.lovable.app/og-image.jpg",
+  image:
+    "https://id-preview--ce9d7f8c-2a83-4e79-a4c5-292e49ae43f3.lovable.app/og-image.jpg",
   telephone: PHONE,
   address: {
     "@type": "PostalAddress",
@@ -34,10 +46,11 @@ const structuredData = {
   servesCuisine: "Pizza",
   priceRange: "€€",
   areaServed: ["Saint-Sulpice", "Chambéry"],
+  // Fermeture selon l'affluence — pas d'heure de fermeture fixe.
   openingHoursSpecification: [
-    { "@type": "OpeningHoursSpecification", dayOfWeek: "Thursday", opens: "18:00", closes: "22:00" },
-    { "@type": "OpeningHoursSpecification", dayOfWeek: "Friday", opens: "18:00", closes: "22:30" },
-    { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "18:00", closes: "22:30" },
+    { "@type": "OpeningHoursSpecification", dayOfWeek: "Thursday", opens: "18:00" },
+    { "@type": "OpeningHoursSpecification", dayOfWeek: "Friday", opens: "18:00" },
+    { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "18:00" },
   ],
   url: "https://id-preview--ce9d7f8c-2a83-4e79-a4c5-292e49ae43f3.lovable.app/",
 };
@@ -49,12 +62,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Pizza Route 99, votre pizzeria artisanale à Saint-Sulpice près de Chambéry. Pizzas généreuses à emporter, commande WhatsApp au 07 67 10 08 50.",
+          "Pizza Route 99, votre pizzeria artisanale à Saint-Sulpice près de Chambéry. Pizzas généreuses sur place ou à emporter, commande WhatsApp au 07 67 10 08 50.",
       },
       { property: "og:title", content: "Pizza Route 99 — Pizzeria à Saint-Sulpice" },
       {
         property: "og:description",
-        content: "Des pizzas généreuses, préparées avec passion à Saint-Sulpice, près de Chambéry.",
+        content:
+          "Des pizzas généreuses, préparées avec passion à Saint-Sulpice, près de Chambéry.",
       },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "fr_FR" },
@@ -63,7 +77,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:title", content: "Pizza Route 99 — Pizzeria à Saint-Sulpice" },
       {
         name: "twitter:description",
-        content: "Pizzas artisanales à emporter à Saint-Sulpice, près de Chambéry.",
+        content: "Pizzas artisanales sur place ou à emporter à Saint-Sulpice, près de Chambéry.",
       },
     ],
     links: [{ rel: "canonical", href: "/" }],
@@ -77,48 +91,109 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Pizza = { name: string; desc: string; price: string; img: string };
+type MenuItem = { name: string; desc: string };
+type MenuCategory = {
+  id: string;
+  title: string;
+  price: string;
+  icon: typeof Beef;
+  wide?: boolean;
+  items: MenuItem[];
+};
 
-const menu: { category: string; items: Pizza[] }[] = [
+const menu: MenuCategory[] = [
   {
-    category: "Incontournables",
+    id: "viande",
+    title: "Pizzas viande",
+    price: "10 €",
+    icon: Beef,
+    wide: true,
     items: [
-      { name: "Margherita", desc: "Sauce tomate, mozzarella, basilic frais, huile d'olive", price: "10 €", img: pizzaMargherita },
-      { name: "Reine", desc: "Sauce tomate, mozzarella, jambon, champignons", price: "12 €", img: pizzaReine },
-      { name: "4 Fromages", desc: "Mozzarella, chèvre, bleu, parmesan", price: "13 €", img: pizzaQuatreFromages },
+      { name: "Jambon", desc: "Tomate, jambon, emmental" },
+      { name: "Reine", desc: "Tomate, jambon, emmental, champignons frais, olives" },
+      { name: "Bleue", desc: "Crème, jambon, roquefort, emmental, olives" },
+      { name: "Blanche", desc: "Crème, jambon, chèvre, champignon frais, emmental, olives" },
+      { name: "Pépéroni", desc: "Tomate, pépéroni, emmental, œuf, olives" },
+      { name: "Bolo", desc: "Tomate, bœuf haché, huile au basilic, emmental, olives" },
+      { name: "Savoie", desc: "Tomate, diots, reblochon, emmental, olives" },
+      { name: "Poulet", desc: "Tomate, poulet, poivrons, emmental, olives" },
+      { name: "Flamme", desc: "Crème, oignons, lardons, emmental" },
+      { name: "Curry", desc: "Crème, poulet au curry, emmental" },
+      { name: "Tartiflette", desc: "Crème, oignons, lardons, reblochon, emmental" },
     ],
   },
   {
-    category: "Savoyardes",
+    id: "vegetariennes",
+    title: "Pizzas végétariennes",
+    price: "10 €",
+    icon: Leaf,
     items: [
-      { name: "Savoyarde", desc: "Crème, mozzarella, reblochon, lardons, pommes de terre", price: "14 €", img: pizzaSavoyarde },
-      { name: "Montagnarde", desc: "Crème, mozzarella, raclette, jambon, oignons", price: "14 €", img: pizzaMontagnarde },
+      { name: "Margarita", desc: "Tomate, emmental, olives" },
+      { name: "Chèvre", desc: "Tomate, chèvre, emmental, olives" },
+      {
+        name: "5 Fromages",
+        desc: "Tomate, mozzarella, chèvre, reblochon, roquefort, emmental, olives",
+      },
+      { name: "Lune de miel", desc: "Tomate, chèvre, miel, crème, emmental" },
+      { name: "Raviole", desc: "Crème, ravioles, chèvre, emmental, olives" },
+      {
+        name: "Véggie",
+        desc: "Tomate, oignons, aubergines, champignons frais, emmental, olives",
+      },
+      { name: "Ratata", desc: "Tomate, ratatouille — pizza sans fromage" },
     ],
   },
   {
-    category: "Végétariennes",
+    id: "poisson",
+    title: "Pizzas poisson",
+    price: "10 €",
+    icon: Fish,
     items: [
-      { name: "Végétarienne", desc: "Sauce tomate, mozzarella, courgettes, poivrons, champignons, aubergines", price: "12 €", img: pizzaVegetarienne },
+      { name: "Saumon", desc: "Crème, saumon fumé, emmental" },
+      { name: "Thon", desc: "Tomate, thon, emmental, crème" },
+      { name: "Tonton", desc: "Crème, thon, emmental" },
+      { name: "Anchois", desc: "Tomate, anchois, emmental" },
     ],
   },
-];
-
-const fullMenuExtras = [
-  { name: "Chorizo", desc: "Sauce tomate, mozzarella, chorizo, poivrons", price: "12 €" },
-  { name: "Végane", desc: "Sauce tomate, légumes grillés, roquette (sans fromage)", price: "12 €" },
-  { name: "Calzone", desc: "Sauce tomate, mozzarella, jambon, œuf, champignons", price: "13 €" },
-  { name: "Poulet BBQ", desc: "Sauce BBQ, mozzarella, poulet, oignons, poivrons", price: "13 €" },
-  { name: "Fruits de mer", desc: "Sauce tomate, mozzarella, crevettes, moules, calamars", price: "15 €" },
-  { name: "Tartiflette", desc: "Crème, reblochon, pommes de terre, lardons, oignons", price: "14 €" },
+  {
+    id: "desserts",
+    title: "Desserts",
+    price: "10 €",
+    icon: IceCream,
+    items: [
+      { name: "Pizza Nutella", desc: "" },
+      { name: "Pizza Nutella Banane", desc: "" },
+      { name: "Pizza aux pommes", desc: "" },
+      { name: "Tarte aux fruits", desc: "Sur réservation" },
+    ],
+  },
+  {
+    id: "coups-de-coeur",
+    title: "Coups de cœur",
+    price: "12 €",
+    icon: Sparkles,
+    items: [
+      {
+        name: "Sucrée-salée",
+        desc: "Tomate, magret fumé, chèvre, miel, crème, emmental",
+      },
+      { name: "Magret", desc: "Tomate, lardons, emmental, magret fumé" },
+      {
+        name: "Ratatouille",
+        desc: "Tomate, ratatouille, emmental, jambon cru, olives",
+      },
+      { name: "Escargot", desc: "Tomate, escargots, champignons, emmental" },
+    ],
+  },
 ];
 
 const hours = [
   { day: "Lundi", value: "Fermé", closed: true },
   { day: "Mardi", value: "Fermé", closed: true },
   { day: "Mercredi", value: "Fermé", closed: true },
-  { day: "Jeudi", value: "18h — 22h" },
-  { day: "Vendredi", value: "18h — 22h30" },
-  { day: "Samedi", value: "18h — 22h30" },
+  { day: "Jeudi", value: "à partir de 18h" },
+  { day: "Vendredi", value: "à partir de 18h" },
+  { day: "Samedi", value: "à partir de 18h" },
   { day: "Dimanche", value: "Fermé", closed: true },
 ];
 
@@ -281,13 +356,13 @@ function HoursSection() {
             ))}
           </ul>
           <p className="mt-6 text-sm text-muted-foreground italic">
-            Les horaires peuvent exceptionnellement varier. N'hésitez pas à nous appeler pour confirmer.
+            Ouvert à partir de 18h, fermeture selon l'affluence.
           </p>
         </div>
         <div className="rounded-3xl bg-primary text-primary-foreground shadow-warm p-6 md:p-8 flex flex-col justify-center">
           <h3 className="font-display text-3xl font-bold">Envie d'une pizza ce soir&nbsp;?</h3>
           <p className="mt-3 text-primary-foreground/85 text-lg">
-            Passez commande en un clin d'œil sur WhatsApp ou par téléphone. Vente à emporter uniquement.
+            Passez commande en un clin d'œil sur WhatsApp ou par téléphone. Sur place ou à emporter.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <a
@@ -315,113 +390,74 @@ function MenuSection() {
   return (
     <section id="menu" className="bg-secondary/40 py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-4">
-        <SectionHeader
-          eyebrow="Notre carte"
-          title="Des pizzas généreuses & artisanales"
-          sub="Sélection d'exemples — la carte complète est disponible en boutique et évolue selon les saisons."
-        />
-        <div className="mt-4 rounded-xl border border-gold/40 bg-gold/10 px-4 py-3 text-sm text-foreground/80">
-          ⚠️ Les pizzas ci-dessous sont des <strong>exemples fictifs</strong> à remplacer par la carte réelle du restaurant.
+        <SectionHeader eyebrow="Notre carte" title="Découvrez notre carte" />
+
+        <div className="mt-10 grid gap-6 md:grid-cols-2 md:auto-rows-min">
+          {menu.map((cat) => (
+            <MenuCategoryCard key={cat.id} category={cat} />
+          ))}
         </div>
 
-        {menu.map((cat) => (
-          <div key={cat.category} className="mt-12">
-            <h3 className="font-display text-2xl md:text-3xl font-bold text-primary">
-              {cat.category}
-            </h3>
-            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {cat.items.map((pizza) => (
-                <PizzaCard key={pizza.name} pizza={pizza} />
-              ))}
-            </div>
-          </div>
-        ))}
-
-        <div className="mt-12 flex justify-center">
-          <FullMenuDialog />
+        <div className="mt-10 rounded-2xl bg-card border border-border shadow-card p-6 md:p-7">
+          <h3 className="font-display text-lg font-bold text-primary">Bon à savoir</h3>
+          <ul className="mt-3 grid gap-2 text-sm text-muted-foreground sm:grid-cols-2">
+            <li>• Origan sur toutes les pizzas, sauf Jambon, Lune de miel, Sucrée-salée et desserts</li>
+            <li>• 1 € de supplément par ingrédient supplémentaire</li>
+            <li>• Taille unique : 29 cm</li>
+            <li>• Sur place · À emporter</li>
+            <li>• Parking gratuit</li>
+          </ul>
         </div>
       </div>
     </section>
   );
 }
 
-function PizzaCard({ pizza }: { pizza: Pizza }) {
+function MenuCategoryCard({ category }: { category: MenuCategory }) {
+  const Icon = category.icon;
   return (
-    <article className="group overflow-hidden rounded-3xl bg-card border border-border shadow-card hover:shadow-warm transition-all hover:-translate-y-1">
-      <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-        <img
-          src={pizza.img}
-          alt={`Pizza ${pizza.name}`}
-          loading="lazy"
-          width={800}
-          height={600}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        <span className="absolute top-3 right-3 rounded-full bg-primary px-3 py-1 text-sm font-bold text-primary-foreground shadow-warm">
-          {pizza.price}
-        </span>
-      </div>
-      <div className="p-5">
-        <h4 className="font-display text-xl font-bold">{pizza.name}</h4>
-        <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{pizza.desc}</p>
-      </div>
-    </article>
-  );
-}
-
-function FullMenuDialog() {
-  const [open, setOpen] = useState(false);
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          size="lg"
-          className="rounded-full bg-primary px-8 py-6 text-base font-bold text-primary-foreground shadow-warm hover:opacity-90"
-        >
-          <Utensils className="mr-2 h-5 w-5" /> Voir la carte complète
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="font-display text-3xl">Carte complète</DialogTitle>
-        </DialogHeader>
-        <p className="text-sm text-muted-foreground italic">
-          Exemples fictifs à remplacer par la carte réelle.
-        </p>
-        <div className="mt-4 space-y-6">
-          {menu.map((cat) => (
-            <div key={cat.category}>
-              <h4 className="font-display text-xl font-bold text-primary">{cat.category}</h4>
-              <ul className="mt-3 divide-y divide-border">
-                {cat.items.map((p) => (
-                  <li key={p.name} className="flex justify-between gap-4 py-3">
-                    <div className="min-w-0">
-                      <div className="font-semibold">{p.name}</div>
-                      <div className="text-sm text-muted-foreground">{p.desc}</div>
-                    </div>
-                    <div className="shrink-0 font-bold text-primary">{p.price}</div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-          <div>
-            <h4 className="font-display text-xl font-bold text-primary">Autres créations</h4>
-            <ul className="mt-3 divide-y divide-border">
-              {fullMenuExtras.map((p) => (
-                <li key={p.name} className="flex justify-between gap-4 py-3">
-                  <div className="min-w-0">
-                    <div className="font-semibold">{p.name}</div>
-                    <div className="text-sm text-muted-foreground">{p.desc}</div>
-                  </div>
-                  <div className="shrink-0 font-bold text-primary">{p.price}</div>
-                </li>
-              ))}
-            </ul>
-          </div>
+    <article
+      className={
+        "rounded-3xl bg-card border border-border shadow-card p-6 md:p-7 " +
+        (category.wide ? "md:col-span-2" : "")
+      }
+    >
+      <header className="flex items-center justify-between gap-4 border-b border-border pb-4">
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+            <Icon className="h-5 w-5" strokeWidth={1.75} />
+          </span>
+          <h3 className="font-display text-xl md:text-2xl font-bold text-foreground truncate">
+            {category.title}
+          </h3>
         </div>
-      </DialogContent>
-    </Dialog>
+        <span className="shrink-0 rounded-full bg-primary px-3 py-1 text-sm font-bold text-primary-foreground">
+          {category.price}
+        </span>
+      </header>
+
+      <ul
+        className={
+          "mt-5 " +
+          (category.wide
+            ? "grid gap-x-8 gap-y-4 sm:grid-cols-2"
+            : "flex flex-col gap-4")
+        }
+      >
+        {category.items.map((item) => (
+          <li key={item.name} className="leading-snug">
+            <div className="font-display text-base font-bold text-primary">
+              {item.name}
+            </div>
+            {item.desc && (
+              <div className="mt-0.5 text-sm text-muted-foreground">
+                {item.desc}
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </article>
   );
 }
 
@@ -431,7 +467,7 @@ function WhySection() {
     { icon: Utensils, title: "Ingrédients généreux", desc: "Fromages fondants, garnitures abondantes, produits frais." },
     { icon: Users, title: "Accueil familial", desc: "Un sourire, un bonjour, et l'envie de vous faire plaisir." },
     { icon: Car, title: "Parking gratuit", desc: "Stationnement facile juste devant la pizzeria." },
-    { icon: ShoppingBag, title: "Vente à emporter", desc: "Commandez, on prépare, vous récupérez. Simple et rapide." },
+    { icon: ShoppingBag, title: "Sur place ou à emporter", desc: "Installez-vous chez nous ou emportez votre pizza en quelques minutes." },
     { icon: Star, title: "Saveurs authentiques", desc: "Recettes savoyardes, classiques italiennes et créations." },
   ];
   return (
